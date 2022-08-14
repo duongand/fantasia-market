@@ -1,0 +1,11 @@
+{
+  "name": "fantasia-market",
+  "version": "1.0.0",
+  "main": "",
+  "scripts": {
+      "start": "npm start --prefix server",
+      "install-client": "npm install --prefix client",
+      "install-server": "npm install --prefix server",
+      "heroku-postbuild": "npm run install-client && npm run install-server"
+  }
+}
