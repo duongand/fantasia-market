@@ -8,7 +8,7 @@ function useAccount() {
 	// initial render, grab balance and stock information
 	useEffect(() => {
 		async function getAccountInformation() {
-			if (getAccessToken() === undefined) return;
+			if (getAccessToken() === null) return;
 
 			axios.get('/trade/user', {
 				params: {
@@ -25,16 +25,27 @@ function useAccount() {
 		getAccountInformation();
 	}, []);
 
-	// functions to update balance and stock holdings based on buying stocks
-	function buyStock(balance, stock, amount) {
+	function updatePurchasedStock(newBalance, purchasedAmount, purchasedStock) {
+		const ownedStocks = 0;
+		for (const stock of stocks) {
+			if (stock.symbol === purchasedStock.symbol) {
+				ownedStocks += stock.amount_own;
+			};
+		};
 
+		axios.post('/trade/buy', {
+			data: {
+				accessToken: getAccessToken(),
+				newBalance: newBalance,
+				symbol: purchasedStock.symbol,
+				newAmount: ownedStocks + purchasedAmount
+			}
+		}).then((response) => {
+			console.log(response);
+		});
 	};
 
-	function sellStock(balance, stock, amount) {
-
-	};
-
-	return { balance, stocks };
+	return { balance, stocks, updatePurchasedStock };
 };
 
 export default useAccount;

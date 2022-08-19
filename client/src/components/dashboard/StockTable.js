@@ -1,22 +1,29 @@
-import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 
 function StockTable({ stocks }) {
+	console.log(stocks)
+
+	const stockRows = stocks.map((stock) => {
+		return (
+			<tr id={stock.id}>
+				<td>{stock.stock_symbol}</td>
+				<td>{stock.amount_own}</td>
+				<td>{stock.price}</td>
+			</tr>
+		);
+	});
+
 	return (
 		<Table striped bordered hover variant="dark" className="stock-table">
 			<thead>
 				<tr>
 					<th>Stock Name</th>
-					<th>Amount of Stocks Owned</th>
+					<th>Amount of Shares Owned</th>
 					<th>Current Stock Price</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>Apple</td>
-					<td>100</td>
-					<td>$1000</td>
-				</tr>
+				{stockRows}
 			</tbody>
 		</Table>
 	);

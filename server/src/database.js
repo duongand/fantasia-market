@@ -2,21 +2,19 @@ import pg from 'pg';
 import bcrypt from 'bcrypt';
 
 const pool = new pg.Pool({
-	user: process.env.PGUSER,
-	host: process.env.PGHOST,
-	database: process.env.PGDATABASE,
-	password: process.env.PGPASSWORD,
-	port: process.env.PGPORT
+	user: 'postgres',
+	host: 'localhost',
+	database: 'postgres',
+	password: 'admin',
+	port: '5432'
 });
 
-export function getDatabaseUserByEmail(email) {
-	return pool.query('SELECT * FROM users WHERE email = $1', [email])
+export async function getDatabaseUserByEmail(email) {
+	return await pool.query('SELECT * FROM users WHERE email = $1', [email])
 		.then((res) => {
 			return res.rows[0];
 		}).catch((err) => {
-			setImmediate(() => {
-				throw err;
-			});
+			console.log(err);
 		});
 };
 
@@ -32,16 +30,40 @@ export async function createDatabaseUser(email, password) {
 
 		pool.query('INSERT INTO balance(balance) VALUES($1)', [100000]);
 	});
+
 	console.log(`User ${email} created`);
 	return { success: true, err: 'none' };
 };
 
 export function getUserBalance(userId) {
-	return pool.query('SELECT * FROM balance WHERE user_id = $1', [userId]);
+	return pool.query('SELECT * FROM balance WHERE user_id = $1', [userId])
+		.then((response) => {
+			return response.rows[0].balance;
+		}).catch((err) => {
+			console.log(err);
+			return undefined;
+		});
 };
 
 export function getUserStocks(userId) {
-	return pool.query('SELECT * FROM stocks WHERE user_id = $1', [userId]);
+	return pool.query('SELECT * FROM stocks WHERE user_id = $1', [userId])
+		.then((response) => {
+			if (response.rows.length === 0) {
+				return [];
+			};
+			return response.rows;
+		}).catch((err) => {
+			console.log(err);
+			return [];
+		});
+};
+
+export function updateUserStock(userId, symbol, newAmount) {
+	pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [newAmount, userId, symbol]);
+};
+
+export function updateUserBalance(userId, newBalance) {
+	pool.query('UPDATE balance SET balance = $1 WHERE user_id = $2', [newBalance, userId]);
 };
 
 function generateHashPassword(password) {

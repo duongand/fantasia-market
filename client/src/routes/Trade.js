@@ -1,9 +1,17 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 import SearchStock from '../components/forms/SearchStock';
 import SearchedStock from '../components/trade/SearchedStock';
 
-function Trade({ queryDraft, queryResult, handleChange, handleSubmit }) {
+function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal, showBuyModal }) {
+	let navigate = useNavigate();
+
+	useEffect(() => {
+		if (localStorage.getItem('token') === null) navigate('../login', { replace: true });
+	}, [navigate]);
+
 	return (
 		<Container className="trade--container">
 			<h3 className="trade--header">Trading Page</h3>
@@ -12,8 +20,16 @@ function Trade({ queryDraft, queryResult, handleChange, handleSubmit }) {
 				handleChange={handleChange}
 				handleSubmit={handleSubmit}
 			/>
-			{queryResult && <SearchedStock 
+			{Object.keys(queryResult).length > 0 && <SearchedStock 
+				balance={balance}
+				stocks={stocks}
 				queryResult={queryResult}
+				amount={amount}
+				handleAmountChange={handleAmountChange}
+				buyStock={buyStock}
+				showBuyStock={showBuyStock}
+				showBuyModal={showBuyModal}
+				closeBuyModal={closeBuyModal}
 			/>}
 		</Container>
 	);

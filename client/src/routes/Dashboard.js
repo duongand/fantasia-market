@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -7,6 +9,12 @@ import AccountVisual from '../components/dashboard/AccountVisual';
 import StockTable from '../components/dashboard/StockTable';
 
 function Dashboard({ balance, stocks }) {
+	let navigate = useNavigate();
+
+	useEffect(() => {
+		if (localStorage.getItem('token') === null) navigate('../login', { replace: true });
+	}, [navigate]);
+
 	return (
 		<Container className="dashboard-container">
 			<Row>

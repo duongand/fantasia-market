@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Home from './routes/Home';
 import Login from './routes/Login';
@@ -8,16 +7,27 @@ import Trade from './routes/Trade';
 import Error from './routes/Error';
 import Navigation from './components/common/Navigation';
 
-import useLogin from './useLogin';
-import useRegister from './useRegister';
-import useAccount from './useAccount';
-import useStockSearch from './useStockSearch';
+import useLogin from './hooks/useLogin';
+import useRegister from './hooks/useRegister';
+import useAccount from './hooks/useAccount';
+import useStockSearch from './hooks/useStockSearch';
+import useBuyStock from './hooks/useBuyStock';
+import useStockForm from './hooks/useStockForm';
 
 function App() {
   const { loginForm, handleLoginChange, handleLoginSubmit } = useLogin();
   const { registerForm, handleRegisterChange, handleRegisterSubmit } = useRegister();
-  const { balance, stocks } = useAccount();
-  const { queryDraft, stockQuery, queryResult, handleQueryChange, submitStockQuery } = useStockSearch();
+  const { balance, stocks, updatePurchasedStock } = useAccount();
+  const { queryDraft, queryResult, handleQueryChange, submitStockQuery } = useStockSearch();
+	const { showBuyStock, closeBuyModal, showBuyModal } = useBuyStock();
+	const { amount, handleAmountChange } = useStockForm();
+
+	function buyStock(event) {
+		event.preventDefault();
+		const purchaseTotal = amount * queryResult.price;
+		const balanceDifference = balance - purchaseTotal;
+		updatePurchasedStock(balanceDifference, amount, queryResult);
+	};
 
   return (
     <div className="App">
@@ -46,10 +56,18 @@ function App() {
         />
         <Route path="/trade" element={
           <Trade
+						balance={balance}
+						stocks={stocks}
             queryDraft={queryDraft}
             queryResult={queryResult}
             handleChange={handleQueryChange}
             handleSubmit={submitStockQuery}
+						amount={amount}
+						handleAmountChange={handleAmountChange}
+						buyStock={buyStock}
+						showBuyStock={showBuyStock}
+						closeBuyModal={closeBuyModal}
+						showBuyModal={showBuyModal}
           />}
         />
         <Route path="/404" element={<Error />} />

@@ -4,7 +4,7 @@ import axios from 'axios';
 function useStockSearch() {
 	const [queryDraft, setQueryDraft] = useState('');
 	const [stockQuery, setStockQuery] = useState('');
-	const [queryResult, setQueryResult] = useState([]);
+	const [queryResult, setQueryResult] = useState({});
 
 	function handleQueryChange(event) {
 		setQueryDraft(event.target.value);
@@ -12,15 +12,13 @@ function useStockSearch() {
 
 	function submitStockQuery(event) {
 		event.preventDefault();
-		console.log(queryDraft);
 		setStockQuery(queryDraft);
-		console.log('searched updated');
 	};
 
 	useEffect(() => {
 		if (stockQuery === '') return;
 
-		axios.get('/trade/stocks', {
+		axios.get('/trade/stock', {
 			params: {
 				symbol: stockQuery
 			}

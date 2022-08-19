@@ -7,7 +7,9 @@ import jwtDecode from 'jwt-decode';
 
 import {
 	getUserBalance,
-	getUserStocks
+	getUserStocks,
+	updateUserStock,
+	updateUserBalance
 } from './database.js';
 
 export const tradeRouter = express.Router();
@@ -18,15 +20,32 @@ tradeRouter.get('/trade/user', async (req, res) => {
 	const { id } = jwtDecode(accessToken);
 	const userBalance = await getUserBalance(id);
 	const userStock = await getUserStocks(id);
+	
+	const stockSymbolString = createSymbolString(userStock);
+	const stockData = await axios.get(`${BASE_URL}/stock/market/batch`, {
+		params: {
+			symbols: stockSymbolString,
+			types: 'quote',
+			token: process.env.IEX_TOKEN
+		}
+	}).then((response) => {
+		return response.data;
+	}).catch((error) => {
+		console.log(error);
+	});
+
+	for (const stock of userStock) {
+		stock['price'] = stockData[stock.stock_symbol].quote.iexRealtimePrice;
+	};
 
 	res.status(200).json({
 		success: true,
-		balance: userBalance.rows[0].balance,
-		stocks: userStock.rows
+		balance: userBalance,
+		stocks: userStock
 	});
 });
 
-tradeRouter.get('/trade/stocks', (req, res) => {
+tradeRouter.get('/trade/stock', (req, res) => {
 	const symbol = req.query.symbol;
 	console.log(symbol);
 	axios.get(`${BASE_URL}/stock/${symbol}/quote/latestPrice`, {
@@ -42,3 +61,19 @@ tradeRouter.get('/trade/stocks', (req, res) => {
 		console.log(error);
 	});
 });
+
+tradeRouter.post('/trade/buy', (req, res) => {
+	const { accessToken, newBalance, symbol, newAmount } = req.body.data;
+	const id = jwtDecode(accessToken);
+
+	updateUserStock(id, symbol, newAmount);
+	updateUserBalance(id, newBalance);
+});
+
+function createSymbolString(stocks) {
+	const stockSymbols = [];
+	for (const stock of stocks) {
+		stockSymbols.push(stock.stock_symbol);
+	};
+	return stockSymbols.join(',');
+};
