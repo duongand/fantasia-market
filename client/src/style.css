@@ -57,3 +57,9 @@ body {
 .stock-search-bar {
   margin-bottom: 30px;
 }
+
+.search-result {
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 5px;
+}

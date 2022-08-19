@@ -1,9 +1,13 @@
 import Form from 'react-bootstrap/Form';
 
-function SearchStock() {
+function SearchStock({ queryDraft, handleChange, handleSubmit }) {
 	return (
-		<Form className="stock-search-bar">
-			<Form.Control type="text" placeholder="Enter stock symbol.." />
+		<Form className="stock-search-bar" onSubmit={handleSubmit}>
+			<Form.Control
+				placeholder="Enter stock symbol.." 
+				value={queryDraft}
+				onChange={handleChange}
+			/>
 		</Form>
 	);
 };

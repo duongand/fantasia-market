@@ -3,24 +3,42 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { Link } from 'react-router-dom';
 
-function RegisterForm() {
+function RegisterForm({ registerForm, handleChange, handleSubmit }) {
 	return (
 		<Container className="register--form-container">
 			<h4 className="register--form-header">Register</h4>
-			<Form>
+			<Form onSubmit={handleSubmit}>
 				<Form.Group>
 					<Form.Label>Email Address</Form.Label>
-					<Form.Control type="email" placeholder="Enter email" />
+					<Form.Control 
+						name="email"
+						type="email" 
+						placeholder="Enter email" 
+						value={registerForm.email}
+						onChange={handleChange}
+					/>
 				</Form.Group>
 
 				<Form.Group>
 					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" plaholder="Password" />
+					<Form.Control 
+						name="password"
+						type="password" 
+						placeholder="Password"
+						value={registerForm.password}
+						onChange={handleChange}	
+					/>
 				</Form.Group>
 
 				<Form.Group>
 					<Form.Label>Confirm Password</Form.Label>
-					<Form.Control type="password" plaholder="Password" />
+					<Form.Control
+						name="confirmPassword" 
+						type="password" 
+						placeholder="Confirm password"
+						value={registerForm.confirmPassword}
+						onChange={handleChange}
+					/>
 				</Form.Group>
 
 				<Form.Group>

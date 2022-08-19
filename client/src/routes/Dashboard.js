@@ -6,7 +6,7 @@ import AccountBalance from '../components/dashboard/AccountBalance';
 import AccountVisual from '../components/dashboard/AccountVisual';
 import StockTable from '../components/dashboard/StockTable';
 
-function Dashboard() {
+function Dashboard({ balance, stocks }) {
 	return (
 		<Container className="dashboard-container">
 			<Row>
@@ -15,7 +15,9 @@ function Dashboard() {
 					<Row className="dashboard--overview-row">
 						{/* Account balance */}
 						<Col lg={6}>
-							<AccountBalance />
+							<AccountBalance 
+								balance={balance}
+							/>
 						</Col>
 						{/* Google visual of owned stocks */}
 						<Col lg={6}>
@@ -24,7 +26,9 @@ function Dashboard() {
 					</Row>
 					<Row className="dashboard--table-row">
 						{/* Table of list of owned stocks */}
-						<StockTable />
+						<StockTable 
+							stocks={stocks}
+						/>
 					</Row>
 				</Col>
 				<Col lg={1}></Col>

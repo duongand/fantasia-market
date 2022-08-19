@@ -1,14 +1,20 @@
 import Container from 'react-bootstrap/Container';
 
 import SearchStock from '../components/forms/SearchStock';
-import SearchedStockTable from '../components/trade/SearchedStockTable';
+import SearchedStock from '../components/trade/SearchedStock';
 
-function Trade() {
+function Trade({ queryDraft, queryResult, handleChange, handleSubmit }) {
 	return (
 		<Container className="trade--container">
 			<h3 className="trade--header">Trading Page</h3>
-			<SearchStock />
-			<SearchedStockTable />
+			<SearchStock 
+				queryDraft={queryDraft}
+				handleChange={handleChange}
+				handleSubmit={handleSubmit}
+			/>
+			{queryResult && <SearchedStock 
+				queryResult={queryResult}
+			/>}
 		</Container>
 	);
 };

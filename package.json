@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "main": "",
   "scripts": {
+    "dev-start": "concurrently \"npm run --prefix server nodemon\" \"npm run --prefix client watch\"",
     "start": "npm start --prefix server",
     "install-client": "npm install --prefix client",
     "install-server": "npm install --prefix server",
     "heroku-postbuild": "npm run install-client && npm run install-server"
+  },
+  "devDependencies": {
+    "concurrently": "^7.3.0"
   }
 }

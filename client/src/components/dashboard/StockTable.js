@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 
-function StockTable() {
+function StockTable({ stocks }) {
 	return (
 		<Table striped bordered hover variant="dark" className="stock-table">
 			<thead>
