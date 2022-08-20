@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 import SearchStock from '../components/forms/SearchStock';
-import SearchedStock from '../components/trade/SearchedStock';
+import SearchedStock from '../components/trade/SearchedStockTable';
 
-function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal, showBuyModal }) {
+function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal, showBuyModal, sellStock, showSellStock, closeSellModal, showSellModal }) {
 	let navigate = useNavigate();
 
 	useEffect(() => {
@@ -30,6 +30,10 @@ function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleS
 				showBuyStock={showBuyStock}
 				showBuyModal={showBuyModal}
 				closeBuyModal={closeBuyModal}
+				sellStock={sellStock}
+				showSellStock={showSellStock}
+				showSellModal={showSellModal}
+				closeSellModal={closeSellModal}
 			/>}
 		</Container>
 	);

@@ -3,15 +3,15 @@ import { useState } from 'react';
 function useSellStock() {
 	const [showSellStock, setSellShowStock] = useState(false);
 	
-	function handleShowStock() {
+	function showSellModal() {
 		setSellShowStock(true);
 	};
 
-	function handleClose() {
+	function closeSellModal() {
 		setSellShowStock(false);
 	};
 
-	return { showSellStock, handleShowStock, handleClose };
+	return { showSellStock, showSellModal, closeSellModal };
 };
 
 export default useSellStock;

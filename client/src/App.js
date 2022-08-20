@@ -12,22 +12,35 @@ import useRegister from './hooks/useRegister';
 import useAccount from './hooks/useAccount';
 import useStockSearch from './hooks/useStockSearch';
 import useBuyStock from './hooks/useBuyStock';
+import useSellStock from './hooks/useSellStock';
 import useStockForm from './hooks/useStockForm';
 
 function App() {
   const { loginForm, handleLoginChange, handleLoginSubmit } = useLogin();
   const { registerForm, handleRegisterChange, handleRegisterSubmit } = useRegister();
-  const { balance, stocks, updatePurchasedStock } = useAccount();
+  const { balance, stocks, updatePurchasedStock, updateSoldStock } = useAccount();
   const { queryDraft, queryResult, handleQueryChange, submitStockQuery } = useStockSearch();
 	const { showBuyStock, closeBuyModal, showBuyModal } = useBuyStock();
-	const { amount, handleAmountChange } = useStockForm();
+  const { showSellStock, showSellModal, closeSellModal } = useSellStock();
+	const { amount, handleAmountChange, resetAmount } = useStockForm();
 
 	function buyStock(event) {
 		event.preventDefault();
-		const purchaseTotal = amount * queryResult.price;
-		const balanceDifference = balance - purchaseTotal;
-		updatePurchasedStock(balanceDifference, amount, queryResult);
+    if (amount === 0) return;
+
+		updatePurchasedStock(balance, amount, queryResult);
+    resetAmount();
+    closeBuyModal();
 	};
+
+  function sellStock(event) {
+    event.preventDefault();
+    if (amount === 0) return;
+
+    updateSoldStock(balance, amount, queryResult);
+    resetAmount();
+    closeSellModal();
+  };
 
   return (
     <div className="App">
@@ -68,6 +81,10 @@ function App() {
 						showBuyStock={showBuyStock}
 						closeBuyModal={closeBuyModal}
 						showBuyModal={showBuyModal}
+            sellStock={sellStock}
+            showSellStock={showSellStock}
+            showSellModal={showSellModal}
+            closeSellModal={closeSellModal}
           />}
         />
         <Route path="/404" element={<Error />} />

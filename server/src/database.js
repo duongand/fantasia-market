@@ -2,11 +2,11 @@ import pg from 'pg';
 import bcrypt from 'bcrypt';
 
 const pool = new pg.Pool({
-	user: 'postgres',
-	host: 'localhost',
-	database: 'postgres',
-	password: 'admin',
-	port: '5432'
+	user: process.env.PGUSER,
+	host: process.env.PGHOST,
+	database: process.env.PGDATABSE,
+	password: process.env.PGPASSWORD,
+	port: process.env.PGPORT
 });
 
 export async function getDatabaseUserByEmail(email) {
@@ -41,7 +41,7 @@ export function getUserBalance(userId) {
 			return response.rows[0].balance;
 		}).catch((err) => {
 			console.log(err);
-			return undefined;
+			return 0;
 		});
 };
 
@@ -58,8 +58,22 @@ export function getUserStocks(userId) {
 		});
 };
 
-export function updateUserStock(userId, symbol, newAmount) {
-	pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [newAmount, userId, symbol]);
+export async function updateUserStock(userId, symbol, amount, key) {
+	const currentStockAmount = await pool.query('SELECT amount_own FROM stocks WHERE user_id = $1 AND stock_symbol = $2', [userId, symbol]);
+	if (key === 'buy') {
+		if (currentStockAmount.rowCount > 0) {
+			const updatedAmount = currentStockAmount.rows[0].amount_own + amount;
+			pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
+		} else {
+			pool.query('INSERT INTO stocks(stock_symbol, amount_own, user_id) VALUES($1, $2, $3)', [symbol, amount, userId]);
+		};
+	} else if (key === 'sell') {
+		if (currentStockAmount.rowCount === 0) return;
+
+		const updatedAmount = currentStockAmount.rows[0].amount_own - amount;
+		if (updatedAmount < 0) return;
+		pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
+	};
 };
 
 export function updateUserBalance(userId, newBalance) {
@@ -75,5 +89,5 @@ function generateHashPassword(password) {
 
 function getDateUTC() {
 	const current = new Date();
-	return `${current.getUTCFullYear()}-${current.getUTCMonth()+1}-${current.getUTCDate()}`;
+	return `${current.getUTCFullYear()}-${current.getUTCMonth() + 1}-${current.getUTCDate()}`;
 };

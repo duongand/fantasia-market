@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.bb6ce183.css",
-    "main.js": "/static/js/main.34f4c68e.js",
+    "main.js": "/static/js/main.4d85cd04.js",
     "static/media/chris-liverani-stock-market.jpg": "/static/media/chris-liverani-stock-market.0c6243dc4689032d9633.jpg",
     "index.html": "/index.html",
     "main.bb6ce183.css.map": "/static/css/main.bb6ce183.css.map",
-    "main.34f4c68e.js.map": "/static/js/main.34f4c68e.js.map"
+    "main.4d85cd04.js.map": "/static/js/main.4d85cd04.js.map"
   },
   "entrypoints": [
     "static/css/main.bb6ce183.css",
-    "static/js/main.34f4c68e.js"
+    "static/js/main.4d85cd04.js"
   ]
 }

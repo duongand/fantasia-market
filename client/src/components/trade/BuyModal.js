@@ -11,8 +11,6 @@ function BuyModal({ balance, stocks, queryResult, amount, handleAmountChange, bu
 
 	useEffect(() => {
 		for (const stock of stocks) {
-			console.log(stock);
-			console.log(queryResult);
 			if (stock.stock_symbol === queryResult.symbol) {
 				setAmountOwned(stock.amount_own);
 			};

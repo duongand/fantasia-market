@@ -5,7 +5,6 @@ function useAccount() {
 	const [balance, setBalance] = useState();
 	const [stocks, setStocks] = useState([]);
 
-	// initial render, grab balance and stock information
 	useEffect(() => {
 		async function getAccountInformation() {
 			if (getAccessToken() === null) return;
@@ -25,27 +24,35 @@ function useAccount() {
 		getAccountInformation();
 	}, []);
 
-	function updatePurchasedStock(newBalance, purchasedAmount, purchasedStock) {
-		const ownedStocks = 0;
-		for (const stock of stocks) {
-			if (stock.symbol === purchasedStock.symbol) {
-				ownedStocks += stock.amount_own;
-			};
-		};
-
+	function updatePurchasedStock(balance, purchasedAmount, purchasedStock) {
 		axios.post('/trade/buy', {
 			data: {
 				accessToken: getAccessToken(),
-				newBalance: newBalance,
-				symbol: purchasedStock.symbol,
-				newAmount: ownedStocks + purchasedAmount
+				balance: balance,
+				purchasedStock: purchasedStock,
+				purchasedAmount: purchasedAmount
 			}
 		}).then((response) => {
-			console.log(response);
+			setBalance(response.data.balance);
+			setStocks(response.data.stocks);
 		});
 	};
 
-	return { balance, stocks, updatePurchasedStock };
+	function updateSoldStock(balance, soldAmount, soldStock) {
+		axios.post('/trade/sell', {
+			data: {
+				accessToken: getAccessToken(),
+				balance: balance,
+				soldStock: soldStock,
+				soldAmount: soldAmount
+			}
+		}).then((response) => {
+			setBalance(response.data.balance);
+			setStocks(response.data.stocks);
+		});
+	};
+
+	return { balance, stocks, updatePurchasedStock, updateSoldStock };
 };
 
 export default useAccount;

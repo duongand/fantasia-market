@@ -19,24 +19,7 @@ tradeRouter.get('/trade/user', async (req, res) => {
 	const accessToken = req.query.accessToken;
 	const { id } = jwtDecode(accessToken);
 	const userBalance = await getUserBalance(id);
-	const userStock = await getUserStocks(id);
-	
-	const stockSymbolString = createSymbolString(userStock);
-	const stockData = await axios.get(`${BASE_URL}/stock/market/batch`, {
-		params: {
-			symbols: stockSymbolString,
-			types: 'quote',
-			token: process.env.IEX_TOKEN
-		}
-	}).then((response) => {
-		return response.data;
-	}).catch((error) => {
-		console.log(error);
-	});
-
-	for (const stock of userStock) {
-		stock['price'] = stockData[stock.stock_symbol].quote.iexRealtimePrice;
-	};
+	const userStock = await compileStockArray(id);
 
 	res.status(200).json({
 		success: true,
@@ -62,13 +45,61 @@ tradeRouter.get('/trade/stock', (req, res) => {
 	});
 });
 
-tradeRouter.post('/trade/buy', (req, res) => {
-	const { accessToken, newBalance, symbol, newAmount } = req.body.data;
-	const id = jwtDecode(accessToken);
+tradeRouter.post('/trade/buy', async (req, res) => {
+	const { accessToken, balance, purchasedStock, purchasedAmount } = req.body.data;
+	const { id } = jwtDecode(accessToken);
+	console.log(purchasedStock);
+	const purchaseTotal = parseInt(purchasedAmount) * parseInt(purchasedStock.price);
+	const newBalance = parseInt(balance) - purchaseTotal;
 
-	updateUserStock(id, symbol, newAmount);
+	updateUserStock(id, purchasedStock.symbol, purchasedAmount, 'buy');
 	updateUserBalance(id, newBalance);
+
+	const userBalance = await getUserBalance(id);
+	const userStock = await compileStockArray(id);
+	res.status(200).json({
+		success: true,
+		balance: userBalance,
+		stocks: userStock
+	});
 });
+
+tradeRouter.post('/trade/sell', async (req, res) => {
+	const { accessToken, balance, soldStock, soldAmount } = req.body.data;
+	const { id } = jwtDecode(accessToken);
+
+	const soldTotal = parseInt(soldAmount) * parseInt(soldStock.price);
+	const newBalance = parseInt(balance) + soldTotal;
+
+	updateUserStock(id, soldStock.symbol, soldAmount, 'sell');
+	updateUserBalance(id, newBalance);
+
+	const userBalance = await getUserBalance(id);
+	const userStock = await compileStockArray(id);
+	res.status(200).json({
+		success: true,
+		balance: userBalance,
+		stocks: userStock
+	});
+});
+
+async function compileStockArray(userId) {
+	const userStocks = await getUserStocks(userId);
+	const stockSymbolString = createSymbolString(userStocks);
+	const stockData = await axios.get(`${BASE_URL}/stock/market/batch`, {
+		params: {
+			symbols: stockSymbolString,
+			types: 'quote',
+			token: process.env.IEX_TOKEN
+		}
+	}).then((response) => {
+		return response.data;
+	}).catch((error) => {
+		console.log(error);
+	});
+
+	return appendStockPrice(userStocks, stockData);
+};
 
 function createSymbolString(stocks) {
 	const stockSymbols = [];
@@ -76,4 +107,11 @@ function createSymbolString(stocks) {
 		stockSymbols.push(stock.stock_symbol);
 	};
 	return stockSymbols.join(',');
+};
+
+function appendStockPrice(userStocks, stockData) {
+	for (const stock of userStocks) {
+		stock['price'] = stockData[stock.stock_symbol].quote.iexRealtimePrice;
+	};
+	return userStocks;
 };
