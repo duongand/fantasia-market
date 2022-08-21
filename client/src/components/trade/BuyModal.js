@@ -8,6 +8,8 @@ import StockForm from '../forms/StockForm';
 
 function BuyModal({ balance, stocks, queryResult, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal }) {
 	const [amountOwned, setAmountOwned] = useState(0);
+	const [subTotal, setSubTotal] = useState(0);
+	const [showWarning, setShowWarning] = useState(false);
 
 	useEffect(() => {
 		for (const stock of stocks) {
@@ -15,7 +17,17 @@ function BuyModal({ balance, stocks, queryResult, amount, handleAmountChange, bu
 				setAmountOwned(stock.amount_own);
 			};
 		};
-	}, [queryResult])
+	}, [stocks, queryResult])
+
+	useEffect(() => {
+		const calculatedSubTotal = parseInt(amount) * parseInt(queryResult.price);
+		setSubTotal(calculatedSubTotal);
+		if (calculatedSubTotal > balance) {
+			setShowWarning(true);
+		} else {
+			setShowWarning(false);
+		};
+	}, [amount]);
 
 	return (
 		<Modal
@@ -37,7 +49,6 @@ function BuyModal({ balance, stocks, queryResult, amount, handleAmountChange, bu
 							Current Amount Owned: {amountOwned} shares
 						</Col>
 					</Row>
-
 					<Row>
 						<Col md={6}>
 							Balance: $ {balance}
@@ -48,6 +59,10 @@ function BuyModal({ balance, stocks, queryResult, amount, handleAmountChange, bu
 								handleAmountChange={handleAmountChange}
 							/>
 						</Col>
+					</Row>
+					<Row>
+						<p>Purchase subtotal: $ {subTotal}</p>
+						{showWarning ? <p className="modal--buy-warning">You do not have enough balance to purchase {amount} shares.</p> : <></>}
 					</Row>
 				</Container>
 			</Modal.Body>

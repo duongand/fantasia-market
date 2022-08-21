@@ -28,7 +28,6 @@ function useRegister() {
 				password: registerForm.password
 			}
 		}).then((response) => {
-			console.log(response);
 			if (response.status === 200) {
 				setRegisterForm({
 					'email': '',

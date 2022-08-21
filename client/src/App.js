@@ -16,9 +16,9 @@ import useSellStock from './hooks/useSellStock';
 import useStockForm from './hooks/useStockForm';
 
 function App() {
-  const { loginForm, handleLoginChange, handleLoginSubmit } = useLogin();
+  const { accessToken, loginForm, handleLoginChange, handleLoginSubmit, logout } = useLogin();
   const { registerForm, handleRegisterChange, handleRegisterSubmit } = useRegister();
-  const { balance, stocks, updatePurchasedStock, updateSoldStock } = useAccount();
+  const { balance, stocks, portfolioWorth, updatePurchasedStock, updateSoldStock } = useAccount(accessToken);
   const { queryDraft, queryResult, handleQueryChange, submitStockQuery } = useStockSearch();
 	const { showBuyStock, closeBuyModal, showBuyModal } = useBuyStock();
   const { showSellStock, showSellModal, closeSellModal } = useSellStock();
@@ -27,7 +27,6 @@ function App() {
 	function buyStock(event) {
 		event.preventDefault();
     if (amount === 0) return;
-
 		updatePurchasedStock(balance, amount, queryResult);
     resetAmount();
     closeBuyModal();
@@ -36,7 +35,6 @@ function App() {
   function sellStock(event) {
     event.preventDefault();
     if (amount === 0) return;
-
     updateSoldStock(balance, amount, queryResult);
     resetAmount();
     closeSellModal();
@@ -44,7 +42,10 @@ function App() {
 
   return (
     <div className="App">
-      <Navigation />
+      <Navigation 
+        accessToken={accessToken}
+        logout={logout}
+      />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={
@@ -63,8 +64,10 @@ function App() {
         />
         <Route path="/dashboard" element={
           <Dashboard
+            accessToken={accessToken}
             balance={balance}
             stocks={stocks}
+            portfolioWorth={portfolioWorth}
           />}
         />
         <Route path="/trade" element={

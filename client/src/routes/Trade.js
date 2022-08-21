@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 import SearchStock from '../components/forms/SearchStock';
-import SearchedStock from '../components/trade/SearchedStockTable';
+import StockCard from '../components/trade/StockCard';
 
 function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal, showBuyModal, sellStock, showSellStock, closeSellModal, showSellModal }) {
 	let navigate = useNavigate();
@@ -20,7 +20,7 @@ function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleS
 				handleChange={handleChange}
 				handleSubmit={handleSubmit}
 			/>
-			{Object.keys(queryResult).length > 0 && <SearchedStock 
+			{Object.keys(queryResult).length > 0 && <StockCard 
 				balance={balance}
 				stocks={stocks}
 				queryResult={queryResult}

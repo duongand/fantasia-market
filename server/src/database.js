@@ -62,17 +62,21 @@ export async function updateUserStock(userId, symbol, amount, key) {
 	const currentStockAmount = await pool.query('SELECT amount_own FROM stocks WHERE user_id = $1 AND stock_symbol = $2', [userId, symbol]);
 	if (key === 'buy') {
 		if (currentStockAmount.rowCount > 0) {
-			const updatedAmount = currentStockAmount.rows[0].amount_own + amount;
-			pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
+			const updatedAmount = parseInt(currentStockAmount.rows[0].amount_own) + parseInt(amount);
+			await pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
 		} else {
-			pool.query('INSERT INTO stocks(stock_symbol, amount_own, user_id) VALUES($1, $2, $3)', [symbol, amount, userId]);
+			await pool.query('INSERT INTO stocks(stock_symbol, amount_own, user_id) VALUES($1, $2, $3)', [symbol, amount, userId]);
 		};
 	} else if (key === 'sell') {
 		if (currentStockAmount.rowCount === 0) return;
 
-		const updatedAmount = currentStockAmount.rows[0].amount_own - amount;
-		if (updatedAmount < 0) return;
-		pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
+		const updatedAmount = parseInt(currentStockAmount.rows[0].amount_own) - parseInt(amount);
+		if (updatedAmount < 0) {
+			return;
+		} else if (updatedAmount === 0) {
+			await pool.query('DELETE FROM stocks WHERE user_id = $1 AND stock_symbol = $2', [userId, symbol]);
+		};
+		await pool.query('UPDATE stocks SET amount_own = $1 WHERE user_id = $2 AND stock_symbol = $3', [updatedAmount, userId, symbol]);
 	};
 };
 

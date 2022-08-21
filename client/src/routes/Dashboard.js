@@ -8,12 +8,12 @@ import AccountBalance from '../components/dashboard/AccountBalance';
 import AccountVisual from '../components/dashboard/AccountVisual';
 import StockTable from '../components/dashboard/StockTable';
 
-function Dashboard({ balance, stocks }) {
+function Dashboard({ accessToken, balance, stocks, portfolioWorth }) {
 	let navigate = useNavigate();
 
 	useEffect(() => {
-		if (localStorage.getItem('token') === null) navigate('../login', { replace: true });
-	}, [navigate]);
+		if (accessToken === null) navigate('../login', { replace: true });
+	}, [accessToken, navigate]);
 
 	return (
 		<Container className="dashboard-container">
@@ -21,19 +21,19 @@ function Dashboard({ balance, stocks }) {
 				<Col lg={1}></Col>
 				<Col>
 					<Row className="dashboard--overview-row">
-						{/* Account balance */}
 						<Col lg={6}>
 							<AccountBalance 
 								balance={balance}
+								portfolioWorth={portfolioWorth}
 							/>
 						</Col>
-						{/* Google visual of owned stocks */}
 						<Col lg={6}>
-							<AccountVisual />
+							<AccountVisual 
+								stocks={stocks}
+							/>
 						</Col>
 					</Row>
 					<Row className="dashboard--table-row">
-						{/* Table of list of owned stocks */}
 						<StockTable 
 							stocks={stocks}
 						/>

@@ -1,14 +1,14 @@
 import { Chart } from 'react-google-charts';
 
-function AccountVisual() {
+function AccountVisual({ stocks }) {
+	
 	const data = [
-		["Task", "Hours per Day"],
-		["Work", 11],
-		["Eat", 2],
-		["Commute", 2],
-		["Watch TV", 2],
-		["Sleep", 7],
+		["Stock", "Number of Share"],
 	];
+
+	for (const stock of stocks) {
+		data.push([stock.stock_symbol, stock.amount_own]);
+	};
 
 	return (
 		<Chart

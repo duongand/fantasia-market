@@ -8,6 +8,7 @@ import StockForm from '../forms/StockForm';
 
 function SellModal({ balance, stocks, queryResult, amount, handleAmountChange, sellStock, showSellStock, closeSellModal }) {
 	const [amountOwned, setAmountOwned] = useState(0);
+	const [showWarning, setShowWarning] = useState(false);
 
 	useEffect(() => {
 		for (const stock of stocks) {
@@ -15,7 +16,15 @@ function SellModal({ balance, stocks, queryResult, amount, handleAmountChange, s
 				setAmountOwned(stock.amount_own);
 			};
 		};
-	}, [queryResult])
+	}, [stocks, queryResult])
+
+	useEffect(() => {
+		if (amount > amountOwned) {
+			setShowWarning(true);
+		} else {
+			setShowWarning(false);
+		}
+	}, [amount]);
 
 	return (
 		<Modal
@@ -48,6 +57,10 @@ function SellModal({ balance, stocks, queryResult, amount, handleAmountChange, s
 								handleAmountChange={handleAmountChange}
 							/>
 						</Col>
+					</Row>
+
+					<Row>
+						{showWarning ? <p className="modal--sell-warning">You cannot sell {amount} shares.</p> : <></>}
 					</Row>
 				</Container>
 			</Modal.Body>

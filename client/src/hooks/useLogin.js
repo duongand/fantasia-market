@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,6 +9,11 @@ function useLogin() {
 		'password': ''
 	});
 	let navigate = useNavigate();
+
+	useEffect(() => {
+		const accessToken = getToken();
+		if (accessToken) setAccessToken(accessToken);
+	}, []);
 
 	function handleLoginChange(event) {
 		const { name, value } = event.target;
@@ -38,11 +43,24 @@ function useLogin() {
 		});
 	};
 
-	return { loginForm, handleLoginChange, handleLoginSubmit };
+	function logout() {
+		removeToken();
+		setAccessToken('');
+	};
+
+	return { accessToken, loginForm, handleLoginChange, handleLoginSubmit, logout };
 };
 
 export default useLogin;
 
+function getToken() {
+	return localStorage.getItem('token');
+};
+
 function setToken(token) {
 	localStorage.setItem('token', token);
+};
+
+function removeToken() {
+	localStorage.clear();
 };

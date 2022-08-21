@@ -30,7 +30,6 @@ tradeRouter.get('/trade/user', async (req, res) => {
 
 tradeRouter.get('/trade/stock', (req, res) => {
 	const symbol = req.query.symbol;
-	console.log(symbol);
 	axios.get(`${BASE_URL}/stock/${symbol}/quote/latestPrice`, {
 		params: {
 			token: process.env.IEX_TOKEN
@@ -48,11 +47,11 @@ tradeRouter.get('/trade/stock', (req, res) => {
 tradeRouter.post('/trade/buy', async (req, res) => {
 	const { accessToken, balance, purchasedStock, purchasedAmount } = req.body.data;
 	const { id } = jwtDecode(accessToken);
-	console.log(purchasedStock);
+	
 	const purchaseTotal = parseInt(purchasedAmount) * parseInt(purchasedStock.price);
 	const newBalance = parseInt(balance) - purchaseTotal;
 
-	updateUserStock(id, purchasedStock.symbol, purchasedAmount, 'buy');
+	await updateUserStock(id, purchasedStock.symbol, purchasedAmount, 'buy');
 	updateUserBalance(id, newBalance);
 
 	const userBalance = await getUserBalance(id);
@@ -71,7 +70,7 @@ tradeRouter.post('/trade/sell', async (req, res) => {
 	const soldTotal = parseInt(soldAmount) * parseInt(soldStock.price);
 	const newBalance = parseInt(balance) + soldTotal;
 
-	updateUserStock(id, soldStock.symbol, soldAmount, 'sell');
+	await updateUserStock(id, soldStock.symbol, soldAmount, 'sell');
 	updateUserBalance(id, newBalance);
 
 	const userBalance = await getUserBalance(id);
@@ -85,6 +84,8 @@ tradeRouter.post('/trade/sell', async (req, res) => {
 
 async function compileStockArray(userId) {
 	const userStocks = await getUserStocks(userId);
+	if (userStocks.length === 0) return [];
+
 	const stockSymbolString = createSymbolString(userStocks);
 	const stockData = await axios.get(`${BASE_URL}/stock/market/batch`, {
 		params: {
@@ -96,6 +97,7 @@ async function compileStockArray(userId) {
 		return response.data;
 	}).catch((error) => {
 		console.log(error);
+		return [];
 	});
 
 	return appendStockPrice(userStocks, stockData);
@@ -111,7 +113,7 @@ function createSymbolString(stocks) {
 
 function appendStockPrice(userStocks, stockData) {
 	for (const stock of userStocks) {
-		stock['price'] = stockData[stock.stock_symbol].quote.iexRealtimePrice;
+		stock['price'] = stockData[stock.stock_symbol].quote.latestPrice;
 	};
 	return userStocks;
 };
