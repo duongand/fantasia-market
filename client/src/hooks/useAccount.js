@@ -23,40 +23,28 @@ function useAccount(accessToken) {
 				setStocks([...response.data.stocks]);
 				setPortfolioWorth(computePortfolioWorth(response.data.stocks));
 			}).catch((error) => {
-				console.log(error);
+				return;
 			});
 		};
 
 		getAccountInformation();
 	}, [accessToken]);
 
-	function updatePurchasedStock(balance, purchasedAmount, purchasedStock) {
-		axios.post('/trade/buy', {
+	function updateStocks(balance, stock, transactionAmount, key) {
+		axios.post('/trade/', {
 			data: {
 				accessToken: accessToken,
 				balance: balance,
-				purchasedStock: purchasedStock,
-				purchasedAmount: purchasedAmount
+				stock: stock,
+				stockAmount: transactionAmount,
+				key: key
 			}
 		}).then((response) => {
 			setBalance(response.data.balance);
 			setStocks([...response.data.stocks]);
 			setPortfolioWorth(computePortfolioWorth(response.data.stocks));
-		});
-	};
-
-	function updateSoldStock(balance, soldAmount, soldStock) {
-		axios.post('/trade/sell', {
-			data: {
-				accessToken: accessToken,
-				balance: balance,
-				soldStock: soldStock,
-				soldAmount: soldAmount
-			}
-		}).then((response) => {
-			setBalance(response.data.balance);
-			setStocks([...response.data.stocks]);
-			setPortfolioWorth(computePortfolioWorth(response.data.stocks));
+		}).catch((error) => {
+			return;
 		});
 	};
 
@@ -68,7 +56,7 @@ function useAccount(accessToken) {
 		return runningSum;
 	};
 
-	return { balance, stocks, portfolioWorth, updatePurchasedStock, updateSoldStock };
+	return { balance, stocks, portfolioWorth, updateStocks };
 };
 
 export default useAccount;

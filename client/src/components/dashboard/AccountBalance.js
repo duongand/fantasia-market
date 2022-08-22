@@ -4,10 +4,10 @@ function AccountBalance({ balance, portfolioWorth }) {
 	return (
 		<Container className="account-balance--container">
 			<h2 className="account-balance--header">Account Balance:</h2>
-			<h3 className="account-balance--amount">$ {balance}</h3>	
+			<h3 className="account-balance--amount">$ {Math.round(balance * 100) / 100}</h3>	
 			<br />
 			<h3 className="account-balance--header">Porfolio Worth:</h3>
-			<h4 className="account-balance--amount">$ {portfolioWorth}</h4>
+			<h4 className="account-balance--amount">$ {Math.round(portfolioWorth * 100) / 100}</h4>
 		</Container>
 	);
 };

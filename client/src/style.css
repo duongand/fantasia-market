@@ -2,11 +2,32 @@
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+  font-family: 'PT Serif', serif;
 }
 
 body {
   background-color: rgba(31, 31, 31);
   color: #ffffff;
+}
+
+.nav-bar--title {
+  margin-right: auto;
+}
+
+.nav-bar--link {
+  text-decoration: none;
+  color: white;
+}
+
+.nav-bar--link:hover {
+  opacity: 50%;
+  color: lightgray;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  margin-top: 15vh;
 }
 
 .home {
@@ -19,6 +40,15 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.home--box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .login--form-container {
@@ -50,24 +80,67 @@ body {
   align-items: center;
 }
 
-.trade--header {
-  margin-top: 15vh;
-}
-
 .stock-search-bar {
+  margin-top: 15vh;
+  width: 300px;
   margin-bottom: 30px;
 }
 
+.stock-search-bar--input {
+  font-size: 18px;
+}
+
 .search-result {
-  border: 1px solid white;
   padding: 10px;
   border-radius: 5px;
 }
 
-.modal {
+.stock-card {
+  width: 25rem;
+}
+
+.stock-card--price-change {
+  display: flex;
+}
+
+.stock-card--postive-change {
+  color: green;
+  margin-left: 5px;
+}
+
+.stock-card--negative-change {
+  color: red;
+  margin-left: 5px;
+}
+
+.stock-card--buttons {
+  float: right;
+}
+
+.stock-card--sell-button {
+  margin-left: 5px;
+}
+
+.stock-card, .error-card {
 	color: black;
 }
 
-.card {
+.modal-content {
   color: black;
+}
+
+.modal--top-row {
+  margin-bottom: 5px;
+}
+
+.modal--bottom-row {
+  margin-bottom: 5px;
+}
+
+.modal--warning {
+  color: red;
+}
+
+.modal--transact-button {
+  margin-left: auto;
 }

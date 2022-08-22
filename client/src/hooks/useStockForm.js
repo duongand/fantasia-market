@@ -1,12 +1,10 @@
 import { useState } from 'react';
 
 function useStockForm() {
-	const [amount, setAmount] = useState();
+	const [amount, setAmount] = useState(0);
 
 	function handleAmountChange(event) {
-		if (event.target.value >= 0) {
-			setAmount(event.target.value);
-		};
+		if (event.target.value >= 0) setAmount(event.target.value);
 	};
 
 	function resetAmount() {

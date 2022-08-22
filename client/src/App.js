@@ -11,38 +11,28 @@ import useLogin from './hooks/useLogin';
 import useRegister from './hooks/useRegister';
 import useAccount from './hooks/useAccount';
 import useStockSearch from './hooks/useStockSearch';
-import useBuyStock from './hooks/useBuyStock';
-import useSellStock from './hooks/useSellStock';
+import useTransaction from './hooks/useTranscation';
 import useStockForm from './hooks/useStockForm';
 
 function App() {
   const { accessToken, loginForm, handleLoginChange, handleLoginSubmit, logout } = useLogin();
   const { registerForm, handleRegisterChange, handleRegisterSubmit } = useRegister();
-  const { balance, stocks, portfolioWorth, updatePurchasedStock, updateSoldStock } = useAccount(accessToken);
+  const { balance, stocks, portfolioWorth, updateStocks } = useAccount(accessToken);
   const { queryDraft, queryResult, handleQueryChange, submitStockQuery } = useStockSearch();
-	const { showBuyStock, closeBuyModal, showBuyModal } = useBuyStock();
-  const { showSellStock, showSellModal, closeSellModal } = useSellStock();
-	const { amount, handleAmountChange, resetAmount } = useStockForm();
+  const { modalKey, showModal, openModal, closeModal } = useTransaction();
+  const { amount, handleAmountChange, resetAmount } = useStockForm();
 
-	function buyStock(event) {
-		event.preventDefault();
-    if (amount === 0) return;
-		updatePurchasedStock(balance, amount, queryResult);
-    resetAmount();
-    closeBuyModal();
-	};
-
-  function sellStock(event) {
+  function transactStocks(event) {
     event.preventDefault();
     if (amount === 0) return;
-    updateSoldStock(balance, amount, queryResult);
+    updateStocks(balance, queryResult, amount, event.target.value);
     resetAmount();
-    closeSellModal();
+    closeModal();
   };
 
   return (
     <div className="App">
-      <Navigation 
+      <Navigation
         accessToken={accessToken}
         logout={logout}
       />
@@ -72,25 +62,22 @@ function App() {
         />
         <Route path="/trade" element={
           <Trade
-						balance={balance}
-						stocks={stocks}
+            balance={balance}
+            stocks={stocks}
             queryDraft={queryDraft}
             queryResult={queryResult}
             handleChange={handleQueryChange}
             handleSubmit={submitStockQuery}
-						amount={amount}
-						handleAmountChange={handleAmountChange}
-						buyStock={buyStock}
-						showBuyStock={showBuyStock}
-						closeBuyModal={closeBuyModal}
-						showBuyModal={showBuyModal}
-            sellStock={sellStock}
-            showSellStock={showSellStock}
-            showSellModal={showSellModal}
-            closeSellModal={closeSellModal}
+            amount={amount}
+            handleAmountChange={handleAmountChange}
+            transactStocks={transactStocks}
+            modalKey={modalKey}
+            showModal={showModal}
+            openModal={openModal}
+            closeModal={closeModal}
           />}
         />
-        <Route path="/404" element={<Error />} />
+        <Route path="*" element={<Error />} />
       </Routes>
     </div>
   );

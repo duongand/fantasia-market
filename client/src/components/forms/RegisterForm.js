@@ -18,18 +18,16 @@ function RegisterForm({ registerForm, handleChange, handleSubmit }) {
 						onChange={handleChange}
 					/>
 				</Form.Group>
-
 				<Form.Group>
 					<Form.Label>Password</Form.Label>
 					<Form.Control 
 						name="password"
 						type="password" 
-						placeholder="Password"
+						placeholder="Enter password"
 						value={registerForm.password}
 						onChange={handleChange}	
 					/>
 				</Form.Group>
-
 				<Form.Group>
 					<Form.Label>Confirm Password</Form.Label>
 					<Form.Control
@@ -40,16 +38,12 @@ function RegisterForm({ registerForm, handleChange, handleSubmit }) {
 						onChange={handleChange}
 					/>
 				</Form.Group>
-
 				<Form.Group>
 					<Link to="/login">Already have an account?</Link>
 				</Form.Group>
-
 				<Button variant="primary" type="submit">Register</Button>
 			</Form>
-
 		</Container>
-
 	);
 };
 

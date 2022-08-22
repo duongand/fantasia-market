@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 import SearchStock from '../components/forms/SearchStock';
-import StockCard from '../components/trade/StockCard';
+import SearchResult from '../components/trade/SearchResult';
 
-function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, buyStock, showBuyStock, closeBuyModal, showBuyModal, sellStock, showSellStock, closeSellModal, showSellModal }) {
+function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleSubmit, amount, handleAmountChange, transactStocks, modalKey, showModal, openModal, closeModal }) {
 	let navigate = useNavigate();
 
 	useEffect(() => {
@@ -14,26 +14,22 @@ function Trade({ balance, stocks, queryDraft, queryResult, handleChange, handleS
 
 	return (
 		<Container className="trade--container">
-			<h3 className="trade--header">Trading Page</h3>
 			<SearchStock 
 				queryDraft={queryDraft}
 				handleChange={handleChange}
 				handleSubmit={handleSubmit}
 			/>
-			{Object.keys(queryResult).length > 0 && <StockCard 
+			{Object.keys(queryResult).length > 0 && <SearchResult 
 				balance={balance}
 				stocks={stocks}
 				queryResult={queryResult}
 				amount={amount}
 				handleAmountChange={handleAmountChange}
-				buyStock={buyStock}
-				showBuyStock={showBuyStock}
-				showBuyModal={showBuyModal}
-				closeBuyModal={closeBuyModal}
-				sellStock={sellStock}
-				showSellStock={showSellStock}
-				showSellModal={showSellModal}
-				closeSellModal={closeSellModal}
+				transactStocks={transactStocks}
+				modalKey={modalKey}
+				showModal={showModal}
+				openModal={openModal}
+				closeModal={closeModal}
 			/>}
 		</Container>
 	);

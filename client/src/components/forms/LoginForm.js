@@ -18,18 +18,16 @@ function LoginForm({ loginForm, handleChange, handleSubmit }) {
 						onChange={handleChange}
 					/>
 				</Form.Group>
-
 				<Form.Group>
 					<Form.Label>Password</Form.Label>
 					<Form.Control
 						name="password"
 						type="password"
-						plaholder="Password"
+						placeholder="Enter password"
 						value={loginForm.password}
 						onChange={handleChange}
 					/>
 				</Form.Group>
-
 				<Form.Group>
 					<Link to="/register">Need an account?</Link>
 				</Form.Group>

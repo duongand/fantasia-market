@@ -7,7 +7,7 @@ function useStockSearch() {
 	const [queryResult, setQueryResult] = useState({});
 
 	function handleQueryChange(event) {
-		setQueryDraft(event.target.value);
+		setQueryDraft(event.target.value.toUpperCase());
 	};
 
 	function submitStockQuery(event) {
@@ -18,14 +18,14 @@ function useStockSearch() {
 	useEffect(() => {
 		if (stockQuery === '') return;
 
-		axios.get('/trade/stock', {
+		axios.get('/search/stock', {
 			params: {
 				symbol: stockQuery
 			}
 		}).then((response) => {
 			setQueryResult(response.data);
 		}).catch((error) => {
-			console.log(error);
+			setQueryResult(error.response.data);
 		});
 	}, [stockQuery]);
 
