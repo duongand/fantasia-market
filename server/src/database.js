@@ -1,9 +1,9 @@
 import pg from 'pg';
 import bcrypt from 'bcrypt';
 
-const connectionString = process.env.DATABASE_URL;
 const pool = new pg.Pool({
-	connectionString,
+	connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
 export async function getDatabaseUserByEmail(email) {
