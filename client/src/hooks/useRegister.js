@@ -3,18 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function useRegister() {
+	let navigate = useNavigate();
 	const [registerForm, setRegisterForm] = useState({
 		'email': '',
 		'password': '',
 		'confirmPassword': ''
 	});
-	let navigate = useNavigate();
 
 	function handleRegisterChange(event) {
 		const { name, value } = event.target;
 		setRegisterForm((prevregisterForm) => ({
 			...prevregisterForm,
-			[name]: value
+			[name]: value,
 		}));
 	};
 
@@ -25,16 +25,17 @@ function useRegister() {
 		axios.post('/auth/user', {
 			data: {
 				email: registerForm.email,
-				password: registerForm.password
+				password: registerForm.password,
 			}
 		}).then((response) => {
-			if (response.status === 200) {
+			if (response.data.success) {
 				setRegisterForm({
 					'email': '',
 					'password': '',
-					'confirmPassword': ''
+					'confirmPassword': '',
 				});
-				navigate('../login', { replace:true });
+
+				navigate('../login', { replace: true });
 			};
 		}).catch((error) => {
 			console.log(error);

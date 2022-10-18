@@ -8,7 +8,7 @@ import AccountBalance from '../components/dashboard/AccountBalance';
 import AccountVisual from '../components/dashboard/AccountVisual';
 import StockTable from '../components/dashboard/StockTable';
 
-function Dashboard({ accessToken, balance, stocks, portfolioWorth }) {
+function Dashboard({ balance, stocks, portfolioWorth }) {
   let navigate = useNavigate();
 
   useEffect(() => {

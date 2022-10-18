@@ -18,7 +18,7 @@ function TransactionBody({ balance, queryResult, amount, handleAmountChange, amo
         </Row>
         <Row className="modal--bottom-row">
           <Col md={6}>
-            Balance: $ {Math.round(balance * 100) / 100}
+            Balance: $ {balance}
           </Col>
           <Col md={6}>
             <StockForm

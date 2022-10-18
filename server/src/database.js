@@ -1,17 +1,25 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import pg from 'pg';
 import bcrypt from 'bcrypt';
 
 const pool = new pg.Pool({
 	connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
 });
+
+if (process.env.ENVIRONMENT === "PRODUCTION") {
+	pool.ssl = {
+		rejectUnauthorized: false
+	};
+};
 
 export async function getDatabaseUserByEmail(email) {
 	return await pool.query('SELECT * FROM users WHERE email = $1', [email])
 		.then((res) => {
 			return res.rows[0];
 		}).catch((err) => {
-			return [];
+			return undefined;
 		});
 };
 
@@ -20,14 +28,34 @@ export async function createDatabaseUser(email, password) {
 	if (user) return { success: false, err: 'User exists' };
 
 	const hashPassword = generateHashPassword(password);
-	pool.query('INSERT INTO users(email, password, create_date) VALUES($1, $2, $3)', [email, hashPassword, getDateUTC()], (err, res) => {
-		if (err) {
-			return { success: false, err: err };
-		};
-		pool.query('INSERT INTO balance(balance) VALUES($1)', [100000]);
-	});
+	const client = await pool.connect();
 
-	return { success: true, err: 'none' };
+	let newUser;
+	try {
+		client.query('BEGIN');
+		const usersQueryResult = await client.query(
+			'INSERT INTO users(email, password, create_date) VALUES($1, $2, $3) RETURNING *',
+			[email, hashPassword, getDateUTC()]
+		);
+
+		newUser = usersQueryResult.rows[0];
+
+		await client.query(
+			'INSERT INTO balance(balance, user_id) VALUES($1, $2)',
+			[100000, usersQueryResult.rows[0].id]
+		);
+		client.query('COMMIT');
+	} catch (e) {
+		client.query('ROLLBACK');
+
+		throw new Error(
+			"An error occurred while saving data."
+		);
+	} finally {
+		client.release();
+	};
+
+	return newUser;
 };
 
 export function getUserBalance(userId) {
@@ -40,7 +68,10 @@ export function getUserBalance(userId) {
 };
 
 export function updateUserBalance(userId, newBalance) {
-	pool.query('UPDATE balance SET balance = $1 WHERE user_id = $2', [newBalance, userId]);
+	pool.query('UPDATE balance SET balance = $1 WHERE user_id = $2', [newBalance, userId])
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 export function getUserStocks(userId) {

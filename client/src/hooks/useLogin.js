@@ -31,13 +31,16 @@ function useLogin() {
 				password: loginForm.password
 			}
 		}).then((response) => {
-			setToken(response.data.token);
-			setAccessToken(response.data.token);
-			setLoginForm({
-				'email': '',
-				'password': ''
-			});
-			navigate('../dashboard', { replace: true });
+			if (response.data.success) {
+				setToken(response.data.token);
+				setAccessToken(response.data.token);
+				setLoginForm({
+					'email': '',
+					'password': ''
+				});
+	
+				navigate('../dashboard', { replace: true });
+			};
 		}).catch((error) => {
 			console.log(error);
 		});

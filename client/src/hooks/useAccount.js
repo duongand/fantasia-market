@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function useAccount(accessToken) {
-	const [balance, setBalance] = useState(0);
+	const [balance, setBalance] = useState('');
 	const [stocks, setStocks] = useState([]);
 	const [portfolioWorth, setPortfolioWorth] = useState(0);
 
@@ -53,6 +53,7 @@ function useAccount(accessToken) {
 		for (const stock of stocks) {
 			runningSum += (stock.amount_own * stock.price);
 		};
+		
 		return runningSum;
 	};
 
