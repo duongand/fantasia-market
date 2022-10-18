@@ -4,14 +4,16 @@ dotenv.config();
 import pg from 'pg';
 import bcrypt from 'bcrypt';
 
-const pool = new pg.Pool({
-	connectionString: process.env.DATABASE_URL,
-});
-
+let pool;
 if (process.env.ENVIRONMENT === "PRODUCTION") {
-	pool.ssl = {
-		rejectUnauthorized: false
-	};
+	pool = new pg.Pool({
+		connectionString: process.env.DATABASE_URL,
+		ssl: { rejectUnauthorized: false },
+	});
+} else {
+	pool = new pg.Pool({
+		connectionString: process.env.DATABASE_URL,
+	});
 };
 
 export async function getDatabaseUserByEmail(email) {
